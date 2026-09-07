@@ -10,7 +10,8 @@ It is built as an engine for computer algebra: it favours mathematical exactness
 convenience, strict lexical scope, and type safety over silent coercion.
 
 **The CAS written for MyLISP runs on MyLISP65 without a single change.** `CAS.LSP` in
-`EXAMPLES/` is the same file, byte for byte, that runs on the QL and the Next.
+`EXAMPLES/` is the same file, byte for byte, that runs on the QL and the Next — see
+[MyLISP-CAS](https://github.com/dfernande132/MyLISP-CAS).
 
 ---
 
@@ -52,15 +53,15 @@ The `.LSP` files in `EXAMPLES/` are byte for byte the same as the ones inside th
 
 ## Included examples
 
-| file            | what it does                                                 |
-| --------------- | ------------------------------------------------------------ |
-| `CAS.LSP`       | a computer algebra system written in LISP — the reason the interpreter exists |
-| `PCAS.LSP`      | exercises the CAS chapter by chapter. Load `CAS.LSP` first   |
-| `DERIVA.LSP`    | symbolic differentiation                                     |
-| `SORT.LSP`      | selection sort over lists                                    |
-| `ORDEN.LSP`     | higher-order functions: MAP, FILTER, folds                   |
-| `BASIC.LSP`     | a tour of the basic primitives                               |
-| `TICTACTOE.LSP` | interactive tic-tac-toe; the machine plays a real strategy   |
+| file | what it does |
+|---|---|
+| `CAS.LSP` | a computer algebra system written in LISP — the reason the interpreter exists ([its own repository](https://github.com/dfernande132/MyLISP-CAS)) |
+| `PCAS.LSP` | exercises the CAS chapter by chapter. Load `CAS.LSP` first |
+| `DERIVA.LSP` | symbolic differentiation |
+| `SORT.LSP` | selection sort over lists |
+| `ORDEN.LSP` | higher-order functions: MAP, FILTER, folds |
+| `BASIC.LSP` | a tour of the basic primitives |
+| `TICTACTOE.LSP` | interactive tic-tac-toe; the machine plays a real strategy |
 
 ---
 
@@ -110,8 +111,20 @@ the machine itself.
 
 ---
 
-## Usage and distribution
+## Related
 
-Freeware. Distribute it unmodified and keep the credits.
+- [MyLISP](https://github.com/dfernande132/MyLISP) — the original, for the Sinclair QL.
+- [MyLISP-CAS](https://github.com/dfernande132/MyLISP-CAS) — the computer algebra system,
+  which runs unchanged on both.
+
+---
+
+## Licence
+
+Free to use, privately or commercially. **Programs you write in MyLISP65 are entirely
+yours** — no royalties, no permission needed — and you may ship the interpreter alongside
+them. The interpreter is distributed in binary form only; the source is not released.
+
+See [LICENSE.txt](LICENSE.txt) for the full terms.
 
 Bug reports and comments are welcome.

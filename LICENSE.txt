@@ -1,0 +1,60 @@
+MyLISP65 — Licence
+==================
+
+Copyright (c) 2026 dfsantos. All rights reserved.
+
+MyLISP65 is distributed free of charge in binary form. The source code is not
+released.
+
+
+1. PERMISSION TO USE
+
+You may use MyLISP65 free of charge, for any purpose, private or commercial,
+on any number of machines. No registration, no fee, no notification.
+
+
+2. PROGRAMS YOU WRITE WITH IT
+
+Programs you write in the MyLISP65 language are entirely yours.
+
+This licence claims no rights whatsoever over them. You may keep them private,
+publish them, or sell them, under whatever terms you choose. No royalty is due
+and no permission is required.
+
+To make that practical: you may distribute the unmodified MyLISP65 interpreter
+together with your own programs, including commercially, provided this licence
+notice travels with it.
+
+
+3. REDISTRIBUTION
+
+You may copy and redistribute MyLISP65, provided that:
+
+  a) it is distributed unmodified and complete, and
+  b) this licence notice is included, and
+  c) the authorship is not misrepresented.
+
+You may not sell MyLISP65 itself, nor charge for it beyond the cost of the
+medium. (Distributing it alongside your own programs, as covered in section 2,
+is not affected by this.)
+
+
+4. WHAT IS NOT PERMITTED
+
+You may not modify, patch, disassemble, decompile or reverse engineer the
+MyLISP65 binary, nor attempt to derive its source code.
+
+
+5. NO WARRANTY
+
+MyLISP65 is provided "as is", without warranty of any kind, express or implied,
+including but not limited to the warranties of merchantability, fitness for a
+particular purpose and non-infringement. In no event shall the author be liable
+for any claim, damages or other liability arising from the use of this software.
+
+
+6. THIRD-PARTY COMPONENTS
+
+MyLISP65 is compiled with the Calypsi C compiler and links against its runtime
+library. Those components remain subject to their own licence terms, which are
+not granted or altered by this document.
