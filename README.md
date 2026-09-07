@@ -5,7 +5,9 @@ A LISP-1 interpreter for the **Commodore MEGA65**.
 MyLISP65 is a port of [MyLISP](https://github.com/dfernande132/MyLISP), which was written in
 Pascal for the Sinclair QL and later ported to C for the ZX Spectrum Next. This is that C code
 brought to the MEGA65 — **the same language**, not a variant.
+
 ![MyLISP Screenshot](SCREENSHOT/1.png)
+
 It is built as an engine for computer algebra: it favours mathematical exactness over
 convenience, strict lexical scope, and type safety over silent coercion.
 
