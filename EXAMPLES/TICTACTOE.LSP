@@ -1,302 +1,302 @@
 ; ============================================
-; TRES EN RAYA vs LA MAQUINA - para MyLISP
-; creado con CLAUDE IA 
-; Eres el jugador 1 (X), la maquina es el 2 (O).
-; Sin numeros aleatorios: la maquina juega con
-; estrategia (ganar > bloquear > centro >
-; esquina > borde).
-; posiciones:  1 2 3
+; TRES EN RAYA VS LA MAQUINA - PARA MYLISP
+; CREADO CON CLAUDE IA 
+; ERES EL JUGADOR 1 (X), LA MAQUINA ES EL 2 (O).
+; SIN NUMEROS ALEATORIOS: LA MAQUINA JUEGA CON
+; ESTRATEGIA (GANAR > BLOQUEAR > CENTRO >
+; ESQUINA > BORDE).
+; POSICIONES:  1 2 3
 ;              4 5 6
 ;              7 8 9
-; Cargar con: (load "iatresraya")
+; CARGAR CON: (LOAD "TICTACTOE.LSP")
 ;
-; Como se juega:
-; (mover p)   ->  jugas en la posicion p,
-;                la maquina responde sola
-; (reset)     -> empezar otra vez de nuevo.
+; COMO SE JUEGA:
+; (MOVER P)   ->  JUGAS EN LA POSICION P,
+;                LA MAQUINA RESPONDE SOLA
+; (RESET)     -> EMPEZAR OTRA VEZ DE NUEVO.
 ; ============================================
 
-; --- elemento en la posicion k (empieza en 1) ---
-(defun elem (k lst)
-  (if (= k 1)
-      (car lst)
-      (elem (- k 1) (cdr lst))))
+; --- ELEMENTO EN LA POSICION K (EMPIEZA EN 1) ---
+(DEFUN ELEM (K LST)
+  (IF (= K 1)
+      (CAR LST)
+      (ELEM (- K 1) (CDR LST))))
 
-; --- devuelve un tablero nuevo con v en la posicion k ---
-(defun pon (k v lst)
-  (if (= k 1)
-      (cons v (cdr lst))
-      (cons (car lst) (pon (- k 1) v (cdr lst)))))
+; --- DEVUELVE UN TABLERO NUEVO CON V EN LA POSICION K ---
+(DEFUN PON (K V LST)
+  (IF (= K 1)
+      (CONS V (CDR LST))
+      (CONS (CAR LST) (PON (- K 1) V (CDR LST)))))
 
-; --- simbolo para mostrar segun el valor ---
-(defun simb (v)
-  (cond
-    ((= v 1) "X")
-    ((= v 2) "O")
-    (t "-")))
+; --- SIMBOLO PARA MOSTRAR SEGUN EL VALOR ---
+(DEFUN SIMB (V)
+  (COND
+    ((= V 1) "X")
+    ((= V 2) "O")
+    (T "-")))
 
-; --- imprime una fila de 3 (posiciones p,p+1,p+2) ---
-(defun filatr (lst p)
-  (progn
-    (display (simb (elem p lst)))
-    (display " ")
-    (display (simb (elem (+ p 1) lst)))
-    (display " ")
-    (display (simb (elem (+ p 2) lst)))
-    (newline)))
+; --- IMPRIME UNA FILA DE 3 (POSICIONES P,P+1,P+2) ---
+(DEFUN FILATR (LST P)
+  (PROGN
+    (DISPLAY (SIMB (ELEM P LST)))
+    (DISPLAY " ")
+    (DISPLAY (SIMB (ELEM (+ P 1) LST)))
+    (DISPLAY " ")
+    (DISPLAY (SIMB (ELEM (+ P 2) LST)))
+    (NEWLINE)))
 
-; --- imprime el tablero completo ---
-(defun tabla (lst)
-  (progn
-    (filatr lst 1)
-    (filatr lst 4)
-    (filatr lst 7)))
+; --- IMPRIME EL TABLERO COMPLETO ---
+(DEFUN TABLA (LST)
+  (PROGN
+    (FILATR LST 1)
+    (FILATR LST 4)
+    (FILATR LST 7)))
 
-; --- linea de 3 en raya iguales y no vacias? ---
-(defun linea3 (lst a b c)
-  (and (= (elem a lst) (elem b lst))
-       (and (= (elem b lst) (elem c lst))
-            (not (= (elem a lst) 0)))))
+; --- LINEA DE 3 EN RAYA IGUALES Y NO VACIAS? ---
+(DEFUN LINEA3 (LST A B C)
+  (AND (= (ELEM A LST) (ELEM B LST))
+       (AND (= (ELEM B LST) (ELEM C LST))
+            (NOT (= (ELEM A LST) 0)))))
 
-; --- version que recibe una terna (lista de 3) ---
-(defun linea3t (lst tri)
-  (linea3 lst (car tri) (car (cdr tri)) (car (cdr (cdr tri)))))
+; --- VERSION QUE RECIBE UNA TERNA (LISTA DE 3) ---
+(DEFUN LINEA3T (LST TRI)
+  (LINEA3 LST (CAR TRI) (CAR (CDR TRI)) (CAR (CDR (CDR TRI)))))
 
-; --- las 8 lineas ganadoras posibles ---
-(defun lineas ()
+; --- LAS 8 LINEAS GANADORAS POSIBLES ---
+(DEFUN LINEAS ()
   '((1 2 3) (4 5 6) (7 8 9)
     (1 4 7) (2 5 8) (3 6 9)
     (1 5 9) (3 5 7)))
 
-; --- recorre las lineas buscando una ganadora ---
-(defun chklin (lst lns)
-  (if (atom lns)
-      nil
-      (if (linea3t lst (car lns))
-          t
-          (chklin lst (cdr lns)))))
+; --- RECORRE LAS LINEAS BUSCANDO UNA GANADORA ---
+(DEFUN CHKLIN (LST LNS)
+  (IF (ATOM LNS)
+      NIL
+      (IF (LINEA3T LST (CAR LNS))
+          T
+          (CHKLIN LST (CDR LNS)))))
 
-; --- hay algun ganador en el tablero? ---
-(defun gano (lst)
-  (chklin lst (lineas)))
+; --- HAY ALGUN GANADOR EN EL TABLERO? ---
+(DEFUN GANO (LST)
+  (CHKLIN LST (LINEAS)))
 
-; --- el tablero esta lleno? (para empate) ---
-(defun lleno (lst)
-  (if (atom lst)
-      t
-      (if (= (car lst) 0)
-          nil
-          (lleno (cdr lst)))))
+; --- EL TABLERO ESTA LLENO? (PARA EMPATE) ---
+(DEFUN LLENO (LST)
+  (IF (ATOM LST)
+      T
+      (IF (= (CAR LST) 0)
+          NIL
+          (LLENO (CDR LST)))))
 
-; --- la casilla p ya esta ocupada? ---
-(defun ocupada (lst p)
-  (not (= (elem p lst) 0)))
+; --- LA CASILLA P YA ESTA OCUPADA? ---
+(DEFUN OCUPADA (LST P)
+  (NOT (= (ELEM P LST) 0)))
 
-(defun libre (lst p)
-  (not (ocupada lst p)))
+(DEFUN LIBRE (LST P)
+  (NOT (OCUPADA LST P)))
 
-; --- revisa una linea: si 2 son de j y 1 vacia, devuelve esa ---
-(defun chkfila (lst j a b c)
-  (cond
-    ((and (= (elem a lst) j) (and (= (elem b lst) j) (= (elem c lst) 0))) c)
-    ((and (= (elem a lst) j) (and (= (elem c lst) j) (= (elem b lst) 0))) b)
-    ((and (= (elem b lst) j) (and (= (elem c lst) j) (= (elem a lst) 0))) a)
-    (t 0)))
+; --- REVISA UNA LINEA: SI 2 SON DE J Y 1 VACIA, DEVUELVE ESA ---
+(DEFUN CHKFILA (LST J A B C)
+  (COND
+    ((AND (= (ELEM A LST) J) (AND (= (ELEM B LST) J) (= (ELEM C LST) 0))) C)
+    ((AND (= (ELEM A LST) J) (AND (= (ELEM C LST) J) (= (ELEM B LST) 0))) B)
+    ((AND (= (ELEM B LST) J) (AND (= (ELEM C LST) J) (= (ELEM A LST) 0))) A)
+    (T 0)))
 
-; --- recorre las lineas buscando una jugada de j ---
-(defun buscaf (lst j lns)
-  (if (atom lns)
+; --- RECORRE LAS LINEAS BUSCANDO UNA JUGADA DE J ---
+(DEFUN BUSCAF (LST J LNS)
+  (IF (ATOM LNS)
       0
-      (buscaf2 lst j lns)))
+      (BUSCAF2 LST J LNS)))
 
-(defun buscaf2 (lst j lns)
-  (let ((tri (car lns)))
-    (let ((r (chkfila lst j (car tri) (car (cdr tri)) (car (cdr (cdr tri))))))
-      (cond
-        ((not (= r 0)) r)
-        (t (buscaf lst j (cdr lns)))))))
+(DEFUN BUSCAF2 (LST J LNS)
+  (LET ((TRI (CAR LNS)))
+    (LET ((R (CHKFILA LST J (CAR TRI) (CAR (CDR TRI)) (CAR (CDR (CDR TRI))))))
+      (COND
+        ((NOT (= R 0)) R)
+        (T (BUSCAF LST J (CDR LNS)))))))
 
-; --- posicion donde la maquina ganaria ya (0 si ninguna) ---
-(defun ganamov (lst)
-  (buscaf lst 2 (lineas)))
+; --- POSICION DONDE LA MAQUINA GANARIA YA (0 SI NINGUNA) ---
+(DEFUN GANAMOV (LST)
+  (BUSCAF LST 2 (LINEAS)))
 
-; --- posicion donde hay que bloquear al humano ---
-(defun bloqmov (lst)
-  (buscaf lst 1 (lineas)))
+; --- POSICION DONDE HAY QUE BLOQUEAR AL HUMANO ---
+(DEFUN BLOQMOV (LST)
+  (BUSCAF LST 1 (LINEAS)))
 
-; --- primera posicion libre de una lista de candidatas ---
-(defun primlib (lst lns)
-  (if (atom lns)
+; --- PRIMERA POSICION LIBRE DE UNA LISTA DE CANDIDATAS ---
+(DEFUN PRIMLIB (LST LNS)
+  (IF (ATOM LNS)
       0
-      (if (libre lst (car lns))
-          (car lns)
-          (primlib lst (cdr lns)))))
+      (IF (LIBRE LST (CAR LNS))
+          (CAR LNS)
+          (PRIMLIB LST (CDR LNS)))))
 
-(defun esquinas ()
+(DEFUN ESQUINAS ()
   '(1 3 7 9))
 
-(defun bordes ()
+(DEFUN BORDES ()
   '(2 4 6 8))
 
-; --- estrategia de la maquina, en pasos chicos ---
-(defun iamov4 (lst)
-  (let ((esq (primlib lst (esquinas))))
-    (cond
-      ((not (= esq 0)) esq)
-      (t (primlib lst (bordes))))))
+; --- ESTRATEGIA DE LA MAQUINA, EN PASOS CHICOS ---
+(DEFUN IAMOV4 (LST)
+  (LET ((ESQ (PRIMLIB LST (ESQUINAS))))
+    (COND
+      ((NOT (= ESQ 0)) ESQ)
+      (T (PRIMLIB LST (BORDES))))))
 
-(defun iamov3 (lst)
-  (cond
-    ((libre lst 5) 5)
-    (t (iamov4 lst))))
+(DEFUN IAMOV3 (LST)
+  (COND
+    ((LIBRE LST 5) 5)
+    (T (IAMOV4 LST))))
 
-(defun iamov2 (lst)
-  (let ((bloq (bloqmov lst)))
-    (cond
-      ((not (= bloq 0)) bloq)
-      (t (iamov3 lst)))))
+(DEFUN IAMOV2 (LST)
+  (LET ((BLOQ (BLOQMOV LST)))
+    (COND
+      ((NOT (= BLOQ 0)) BLOQ)
+      (T (IAMOV3 LST)))))
 
-(defun iamov (lst)
-  (let ((gana (ganamov lst)))
-    (cond
-      ((not (= gana 0)) gana)
-      (t (iamov2 lst)))))
+(DEFUN IAMOV (LST)
+  (LET ((GANA (GANAMOV LST)))
+    (COND
+      ((NOT (= GANA 0)) GANA)
+      (T (IAMOV2 LST)))))
 
-; --- mensajes, cada uno en su propia funcion chica ---
-(defun msgocup (lst)
-  (progn
-    (display "Casilla ocupada, elegi otra")
-    (newline)))
+; --- MENSAJES, CADA UNO EN SU PROPIA FUNCION CHICA ---
+(DEFUN MSGOCUP (LST)
+  (PROGN
+    (DISPLAY "Casilla ocupada, elegi otra")
+    (NEWLINE)))
 
-(defun msggano (nuevo j)
-  (progn
-    (tabla nuevo)
-    (display "Jugador ")
-    (display j)
-    (display " GANO!")
-    (newline)))
+(DEFUN MSGGANO (NUEVO J)
+  (PROGN
+    (TABLA NUEVO)
+    (DISPLAY "Jugador ")
+    (DISPLAY J)
+    (DISPLAY " GANO!")
+    (NEWLINE)))
 
-(defun msgemp (nuevo)
-  (progn
-    (tabla nuevo)
-    (display "EMPATE!")
-    (newline)))
+(DEFUN MSGEMP (NUEVO)
+  (PROGN
+    (TABLA NUEVO)
+    (DISPLAY "EMPATE!")
+    (NEWLINE)))
 
-(defun msgturno ()
-  (progn
-    (tabla tablero)
-    (display "Tu turno (X)")
-    (newline)))
+(DEFUN MSGTURNO ()
+  (PROGN
+    (TABLA TABLERO)
+    (DISPLAY "Tu turno (X)")
+    (NEWLINE)))
 
-; --- tablero vacio ---
-(defun inicio ()
+; --- TABLERO VACIO ---
+(DEFUN INICIO ()
   '(0 0 0 0 0 0 0 0 0))
 
-; --- variable global con el tablero actual ---
-(define tablero (inicio))
+; --- VARIABLE GLOBAL CON EL TABLERO ACTUAL ---
+(DEFINE TABLERO (INICIO))
 
-; --- contador de turnos, para limpiar memoria solo ---
-(define turno 0)
+; --- CONTADOR DE TURNOS, PARA LIMPIAR MEMORIA SOLO ---
+(DEFINE TURNO 0)
 
-(defun incturno ()
-  (define turno (+ turno 1)))
+(DEFUN INCTURNO ()
+  (DEFINE TURNO (+ TURNO 1)))
 
-(defun tocalimp ()
-  (= (mod turno 2) 0))
+(DEFUN TOCALIMP ()
+  (= (MOD TURNO 2) 0))
 
-(defun limpiasi ()
-  (cond
-    ((tocalimp) (clean))
-    (t nil)))
+(DEFUN LIMPIASI ()
+  (COND
+    ((TOCALIMP) (CLEAN))
+    (T NIL)))
 
-; --- reiniciar la partida ---
-(defun reset ()
-  (progn
-    (define tablero (inicio))
-    (define turno 0)))
+; --- REINICIAR LA PARTIDA ---
+(DEFUN RESET ()
+  (PROGN
+    (DEFINE TABLERO (INICIO))
+    (DEFINE TURNO 0)))
 
-; --- turno de la maquina, despues del tuyo ---
-(defun turnomaq ()
-  (progn
-    (define tablero (pon (iamov tablero) 2 tablero))
-    (turnm2)))
+; --- TURNO DE LA MAQUINA, DESPUES DEL TUYO ---
+(DEFUN TURNOMAQ ()
+  (PROGN
+    (DEFINE TABLERO (PON (IAMOV TABLERO) 2 TABLERO))
+    (TURNM2)))
 
-(defun turnm2 ()
-  (cond
-    ((gano tablero) (msggano tablero 2))
-    ((lleno tablero) (msgemp tablero))
-    (t (msgturno))))
+(DEFUN TURNM2 ()
+  (COND
+    ((GANO TABLERO) (MSGGANO TABLERO 2))
+    ((LLENO TABLERO) (MSGEMP TABLERO))
+    (T (MSGTURNO))))
 
-; --- tu turno, revisa si seguis vos o pasa a la maquina ---
-(defun turnh2 ()
-  (cond
-    ((gano tablero) (msggano tablero 1))
-    ((lleno tablero) (msgemp tablero))
-    (t (turnomaq))))
+; --- TU TURNO, REVISA SI SEGUIS VOS O PASA A LA MAQUINA ---
+(DEFUN TURNH2 ()
+  (COND
+    ((GANO TABLERO) (MSGGANO TABLERO 1))
+    ((LLENO TABLERO) (MSGEMP TABLERO))
+    (T (TURNOMAQ))))
 
-(defun turnohum (p)
-  (progn
-    (define tablero (pon p 1 tablero))
-    (turnh2)))
+(DEFUN TURNOHUM (P)
+  (PROGN
+    (DEFINE TABLERO (PON P 1 TABLERO))
+    (TURNH2)))
 
-; --- funcion principal: mover posicion ---
-(defun mover (p)
-  (cond
-    ((ocupada tablero p) (msgocup tablero))
-    (t (mover2 p))))
+; --- FUNCION PRINCIPAL: MOVER POSICION ---
+(DEFUN MOVER (P)
+  (COND
+    ((OCUPADA TABLERO P) (MSGOCUP TABLERO))
+    (T (MOVER2 P))))
 
-(defun mover2 (p)
-  (progn
-    (incturno)
-    (turnohum p)
-    (limpiasi)))
+(DEFUN MOVER2 (P)
+  (PROGN
+    (INCTURNO)
+    (TURNOHUM P)
+    (LIMPIASI)))
 
-; --- pantalla de bienvenida---
-(defun titulo ()
-  (progn
-    (display "*********************")
-    (newline)
-    (display "*   TRES EN RAYA    *")
-    (newline)
-    (display "*   vs la maquina   *")
-    (newline)
-    (display "*********************")
-    (newline)))
+; --- PANTALLA DE BIENVENIDA---
+(DEFUN TITULO ()
+  (PROGN
+    (DISPLAY "*********************")
+    (NEWLINE)
+    (DISPLAY "*   TRES EN RAYA    *")
+    (NEWLINE)
+    (DISPLAY "*   vs la maquina   *")
+    (NEWLINE)
+    (DISPLAY "*********************")
+    (NEWLINE)))
 
-(defun ayuda1 ()
-  (progn
-    (display "Posiciones del tablero:")
-    (newline)
-    (display "  1 2 3")
-    (newline)))
+(DEFUN AYUDA1 ()
+  (PROGN
+    (DISPLAY "Posiciones del tablero:")
+    (NEWLINE)
+    (DISPLAY "  1 2 3")
+    (NEWLINE)))
 
-(defun ayuda2 ()
-  (progn
-    (display "  4 5 6")
-    (newline)
-    (display "  7 8 9")
-    (newline)))
+(DEFUN AYUDA2 ()
+  (PROGN
+    (DISPLAY "  4 5 6")
+    (NEWLINE)
+    (DISPLAY "  7 8 9")
+    (NEWLINE)))
 
-(defun ayuda3 ()
-  (progn
-    (display "Jugar: (mover posicion)")
-    (newline)
-    (display "Ejemplo: (mover 5)")
-    (newline)))
+(DEFUN AYUDA3 ()
+  (PROGN
+    (DISPLAY "Jugar: (mover posicion)")
+    (NEWLINE)
+    (DISPLAY "Ejemplo: (mover 5)")
+    (NEWLINE)))
 
-(defun ayuda4 ()
-  (progn
-    (display "Reiniciar: (reset)")
-    (newline)))
+(DEFUN AYUDA4 ()
+  (PROGN
+    (DISPLAY "Reiniciar: (reset)")
+    (NEWLINE)))
 
-(defun bienve ()
-  (progn
-    (titulo)
-    (ayuda1)
-    (ayuda2)
-    (ayuda3)
-    (ayuda4)
-    (tabla tablero)))
+(DEFUN BIENVE ()
+  (PROGN
+    (TITULO)
+    (AYUDA1)
+    (AYUDA2)
+    (AYUDA3)
+    (AYUDA4)
+    (TABLA TABLERO)))
 
-; --- se muestra sola al cargar el archivo ---
-(bienve)
+; --- SE MUESTRA SOLA AL CARGAR EL ARCHIVO ---
+(BIENVE)
