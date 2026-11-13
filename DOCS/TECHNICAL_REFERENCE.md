@@ -1,4 +1,4 @@
-# MyLISP65 v1.0 — Technical Reference
+# MyLISP65 v1.1 — Technical Reference
 
 A LISP interpreter for the MEGA65, written in C and compiled with Calypsi (`cc6502`/`ln6502`).
 
@@ -60,6 +60,8 @@ pointers: the heap, both tables, the task stack, and the auxiliary stacks of the
 | string length | **63** | truncated silently |
 | characters per expression | **500** | `ERR: expression too long`, input discarded |
 | integers | ±2,147,483,647 | `ERR: overflow` (§4) |
+| nested `EVAL` | **6** | `ERR: eval nested too deeply` (§13) |
+| nested parentheses | **55** | `ERR: expression too deeply nested` (§13) |
 
 Two warnings that practice has charged for:
 
@@ -340,6 +342,13 @@ Past it: `ERR: expression too long`, and what was accumulated is discarded.
 **`BYE`** at the prompt exits. Typed in the middle of a multi-line expression it is ordinary
 text, not a command.
 
+**`HELP`** at the prompt prints the built-in reference, pausing every 22 lines. Like `BYE` it is
+a command and not a LISP form: no parentheses, no return value, and it cannot appear inside an
+expression. The text comes from `HELP.INI` on the disk, so it costs nothing in the 32K code
+window and can be edited without recompiling; if the file is missing, `HELP` says so rather than
+falling back to a reduced copy built into the binary. The start-up logo works the same way, from
+`BANNER.INI`.
+
 ---
 
 ## 11. `LOAD` and the disk
@@ -440,11 +449,15 @@ Three traversals do consume the C stack, and all three are bounded. The 6502's s
 bytes, and an insufficient stack **corrupts memory without raising an error**, so these limits
 are not cosmetic.
 
-| traversal | limit | what consumes it |
-|---|---|---|
-| parser | 55 | parenthesis nesting |
-| printer | 32 | nesting of the structure being printed |
-| evaluator re-entry | 8 | nested `(EVAL '(EVAL ...))`, and `LOAD` |
+| traversal | limit | cost per level | what consumes it |
+|---|---|---|---|
+| parser | 55 | ~8 B | parenthesis nesting |
+| printer | 32 | ~82 B | nesting of the structure being printed |
+| evaluator re-entry | **6** | **713 B** | nested `(EVAL '(EVAL ...))`, and `LOAD` |
+
+The per-level costs are measured, not estimated. They are what sets the limits: the C stack is
+4096 bytes, so evaluator re-entry runs out first by a wide margin, at 3097 bytes for 6 levels.
+A seventh level would take 3810 and an eighth 4523 — past the end.
 
 A LISP program's own recursion is **not** in this table: it lives in the task stack in Attic
 RAM, with 8192 entries. That is the whole point of the iterative evaluator.
@@ -456,19 +469,28 @@ Heap: 4211/32768 (12%, live 4211)
 Symbols: 141/512
 Strings: 13/255
 GC: 0 runs, last freed 0
-peaks: parser 23/55 print 1 eval 3/8 tasks 28/8192
+peaks: parser 23/55 print 1 eval 3/6 tasks 28/8192
 ```
 
 **All four are SESSION maxima**, not current values, and only `(NEW)` resets them. They exist so
-limits can be calibrated from data rather than by eye: if `eval` reaches `8/8` on legitimate
+limits can be calibrated from data rather than by eye: if `eval` reaches `6/6` on legitimate
 code, the limit is too low.
 
 Reference figures, measured loading the regression battery plus `CAS.LSP` and `PCAS.LSP` back to
 back: **parser 31**, print 4, eval 3, tasks 29. That 31 matches the figure estimated by
 simulation for `CAS.LSP` much earlier in development — two independent methods, the same number.
 
-**`cstack` is at 4096 bytes and has NOT been measured**, by explicit decision: the program window
-is not tight and the measurement costs an iteration. It is a known gap, not an oversight.
+**The C stack is 4096 bytes and has now been measured** (it was an open gap in 1.0). The
+measurement is what produced the limits in the table above, and it found a real defect: in 1.0
+the evaluator re-entry limit was 8, which is two levels past what the stack holds. Because the C
+stack sits directly above the program's own code in this memory map, overflowing it rewrote the
+running program and dropped the machine into the monitor with no error. Fixed in 1.1.
+
+**One combined case remains unmeasured and is worth knowing about.** The limits above were each
+measured alone. Printing a deeply nested structure from inside deeply nested `EVAL`s adds the
+two costs together, and the sum can exceed 4096 even though neither limit is exceeded on its
+own. The 999 bytes left free at the evaluator's limit are the cushion for it. No real program
+has been seen anywhere near this, and the deepest evaluator use measured is 3 levels.
 
 ---
 
