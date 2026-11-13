@@ -161,6 +161,24 @@ the machine itself.
 
 ---
 
+## Development note
+
+MyLISP is my own work — originally in Pascal for the Sinclair QL, then ported by me to C for
+the ZX Spectrum Next. For this MEGA65 port I worked with Claude (Anthropic) on the memory
+architecture — fitting the interpreter into a 32K code window while the whole interpreter state
+lives in 8 MB of Attic RAM — and above all on generating test cases, including the 90-check
+regression battery that runs on the machine itself. That made the port substantially shorter.
+
+To be specific about what that means: **`DOCS/TECHNICAL_REFERENCE.md` was written by Claude** —
+not from my earlier reference, but from the source code and from measurements taken on the
+machine. That was a deliberate choice, and it is the one that revealed that my older reference
+described a rational arithmetic the code had never implemented. I reviewed and validated it.
+
+The LISP implementation itself — the language, its semantics and its design — is mine, carried
+over from the QL and the Next.
+
+---
+
 ## Related
 
 - [MyLISP](https://github.com/dfernande132/MyLISP) — the original, for the Sinclair QL.
